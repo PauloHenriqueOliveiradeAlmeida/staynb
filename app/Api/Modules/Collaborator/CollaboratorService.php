@@ -37,7 +37,7 @@ class CollaboratorService
 			$this->userCodeEntity->create($verificationCode, $createdUser->id);
 			$this->mailerService->sendRegistrationCode($collaboratorDto->email, $verificationCode);
 
-			Response::sendBody(["message" => "colaborador criado com sucesso"], StatusCode::CREATED);
+			return Response::sendBody(["message" => "colaborador criado com sucesso"], StatusCode::CREATED);
 		} catch (PDOException $e) {
 			throw new BadRequestException($e->getMessage());
 		}
@@ -47,7 +47,8 @@ class CollaboratorService
 	{
 		try {
 			$collaborators = $this->collaboratorEntity->selectAll();
-			Response::sendBody($collaborators);
+
+			return Response::sendBody($collaborators);
 		} catch (PDOException $e) {
 			throw new BadRequestException($e->getMessage());
 		}
@@ -59,7 +60,7 @@ class CollaboratorService
 
 			if (!$collaborator) throw new NotFoundException('Colaborador não encontrado');
 
-			Response::sendBody($collaborator);
+			return Response::sendBody((array) $collaborator);
 		} catch (PDOException $e) {
 			throw new BadRequestException($e->getMessage());
 		}
@@ -70,7 +71,7 @@ class CollaboratorService
 		try {
 			$this->collaboratorEntity->update($id, $collaboratorDto);
 
-			Response::sendBody([
+			return Response::sendBody([
 				"message" => "Colaborador editado com sucesso"
 			]);
 		} catch (PDOException $e) {
@@ -85,7 +86,7 @@ class CollaboratorService
 
 			if (!$deletedCollaborator) throw new NotFoundException('Colaborador não encontrado');
 
-			Response::sendBody([
+			return Response::sendBody([
 				"message" => "Colaborador excluído com sucesso"
 			]);
 		} catch (PDOException $e) {

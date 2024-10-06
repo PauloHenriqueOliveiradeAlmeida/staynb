@@ -32,6 +32,6 @@ class UserGuard implements IGuard
 		if (!$user) throw new UnauthorizedException('Token inválido');
 
 		if ($this->userLevel === UserLevelEnum::ALL) return true;
-		return $this->userLevel->value === (int)$user->is_admin;
+		return $this->userLevel->value === (int) $user->is_admin;
 	}
 }

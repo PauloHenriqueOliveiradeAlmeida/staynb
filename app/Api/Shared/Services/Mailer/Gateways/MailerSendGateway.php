@@ -23,7 +23,7 @@ class MailerSendGateway implements IMailer
 
 		$params = (new EmailParams())
 			->setFrom(getenv("MAILER_DOMAIN"))
-			->setFromName('Staynb')
+			->setFromName('Lazynb')
 			->setRecipients([$recipient])
 			->setTemplateId($templateId)
 			->setPersonalization([$personalization])

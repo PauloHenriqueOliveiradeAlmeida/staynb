@@ -2,7 +2,7 @@
 
 namespace App\Api\Modules\Client\Entity;
 
-use App\Api\Modules\Client\ClientDto;
+use App\Api\Modules\Client\Dtos\ClientDto;
 use App\Api\Shared\Database\Connection;
 
 class ClientEntity

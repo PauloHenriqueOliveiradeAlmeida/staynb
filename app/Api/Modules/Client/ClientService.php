@@ -2,7 +2,11 @@
 
 namespace App\Api\Modules\Client;
 
+use App\Api\Modules\Client\Dtos\ClientDto;
 use App\Api\Modules\Client\Entity\ClientEntity;
+use App\Api\Shared\Services\Mailer\Dtos\SendConversationInviteDto;
+use App\Api\Shared\Services\Mailer\IMailer;
+use App\Api\Shared\Services\Mailer\MailerService;
 use Exception;
 use Raven\Falcon\Http\Response;
 use Raven\Falcon\Http\StatusCode;
@@ -12,13 +16,19 @@ use Raven\Falcon\Http\Exceptions\NotFoundException;
 
 class ClientService
 {
-
-	public function __construct(private readonly ClientEntity $clientEntity = new ClientEntity) {}
+	private MailerService $mailerService;
+	public function __construct(
+		IMailer $iMailer,
+		private readonly ClientEntity $clientEntity = new ClientEntity
+	) {
+		$this->mailerService = new MailerService($iMailer);
+	}
 
 	public function create(ClientDto $clientDto)
 	{
 		try {
 			$this->clientEntity->create($clientDto);
+
 			return Response::sendBody([
 				"message" => "Cliente criado com sucesso"
 			], StatusCode::CREATED);
@@ -31,6 +41,7 @@ class ClientService
 	{
 		try {
 			$clients = $this->clientEntity->selectAll();
+
 			return Response::sendBody($clients);
 		} catch (PDOException $e) {
 			throw new BadRequestException($e->getMessage());
@@ -44,7 +55,7 @@ class ClientService
 
 			if (!$client) throw new BadRequestException('Cliente não encontrado');
 
-			Response::sendBody($client);
+			return Response::sendBody($client);
 		} catch (PDOException $e) {
 			throw new BadRequestException($e->getMessage());
 		}
@@ -54,7 +65,8 @@ class ClientService
 	{
 		try {
 			$this->clientEntity->update($id, $clientDto);
-			Response::sendBody([
+
+			return Response::sendBody([
 				"message" => "Cliente atualizado com sucesso"
 			]);
 		} catch (PDOException $e) {
@@ -68,11 +80,20 @@ class ClientService
 
 			if (!$deletedClient) throw new NotFoundException("Cliente não encontrado");
 
-			Response::sendBody([
+			return Response::sendBody([
 				"message" => "Cliente removido com sucesso"
 			]);
 		} catch (PDOException $e) {
 			throw new BadRequestException($e->getMessage());
 		}
+	}
+
+	public function sendConversationInviteEmail(SendConversationInviteDto $sendConversationInviteDto)
+	{
+		$this->mailerService->sendConversationInvite(getenv("TALK_TO_US_EMAIL"), $sendConversationInviteDto);
+
+		return Response::sendBody([
+			"message" => "Email de contato enviado com sucesso"
+		]);
 	}
 }

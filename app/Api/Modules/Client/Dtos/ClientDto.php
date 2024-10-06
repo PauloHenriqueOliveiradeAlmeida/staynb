@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Api\Modules\Client;
+namespace App\Api\Modules\Client\Dtos;
 
 use App\Api\Shared\Decorators\Validators\IsCPF;
 use Raven\Cassowary\Validators\IsEmail;
